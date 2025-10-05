@@ -11,7 +11,7 @@ def get_model():
     global _MODEL
     if _MODEL is None:
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        model_path = os.path.join(project_root, "model/rf_model.pkl")
+        model_path = os.path.join(project_root, "stacking_model.pkl")
         with open(model_path, "rb") as f:
             _MODEL = joblib.load(f)
     return _MODEL

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import './App.css'
-import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, Zap } from 'lucide-react';
+import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, Zap, CheckCircle } from 'lucide-react';
 import FloatingIcon from './FloatingIcons';
 
 
@@ -111,11 +111,20 @@ function App() {
         <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12 md:px-6 lg:px-8">
           <div className="w-full max-w-4xl mx-auto text-center space-y-8">
             {/* Heading */}
-            <div className="space-y-4">
+            <div className="">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 Pale<span className='text-red-500'>Blue</span>Dot
               </h1>
-              <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto -mt-2">Analyze your dataset to aggresively determine the presence of an ExoPlanet</p>
+              <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto">Analyze your dataset to aggresively determine the presence of an ExoPlanet</p>
+              <p className="text-red-500 font-bold text-base md:text-lg max-w-2xl mx-auto mt-2">Your CSV file must have the following columns to get the right output: </p>
+              <ul className='text-white  mx-[20%]'>
+                <li className='flex items-center gap-2'><CheckCircle className='size-4'/> Planetary Radius (Earth Radius)</li>
+                <li className='flex items-center gap-2'><CheckCircle  className='size-4'/> Equilibrium Temperature(K)</li>
+                <li className='flex items-center gap-2'><CheckCircle  className='size-4'/> Stellar Radius (Solar Radii)</li>
+                <li className='flex items-center gap-2'><CheckCircle  className='size-4'/> Stellar Distance (pc)</li>
+                <li className='flex items-center gap-2'><CheckCircle  className='size-4'/> Planetary Radius (Earth Radius)</li>
+                <li className='flex items-center gap-2'><CheckCircle  className='size-4'/> Stellar Metallicity (dex)</li>
+              </ul>
             </div>
 
             {/* File upload area */}

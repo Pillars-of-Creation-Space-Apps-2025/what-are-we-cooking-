@@ -1,6 +1,6 @@
 import os
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from .services import process_file
 
 app = FastAPI()
@@ -9,7 +9,11 @@ app = FastAPI()
 async def upload_file(file: UploadFile = File(...)):
     try:
         results = await process_file(file)
-        return JSONResponse(content={"results": results})
+        results_name = os.path.basename(results)
+        return JSONResponse(content={
+            "downloadUrl": f"/download/{results_name}/",
+            "filename": results_name
+        })
     except Exception as e:
         return JSONResponse(status_code = status.HTTP_400_BAD_REQUEST, content = {"error": str(e)})
 

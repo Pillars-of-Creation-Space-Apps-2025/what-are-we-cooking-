@@ -108,7 +108,7 @@ function App() {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      setSelectedFile(null)
+      // setSelectedFile(null)
 
       return setDownloading(false)
     } catch (err) {

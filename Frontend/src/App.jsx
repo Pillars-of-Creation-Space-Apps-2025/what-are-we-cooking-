@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import './App.css'
-import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, Zap, CheckCircle } from 'lucide-react';
+import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, CheckCircle } from 'lucide-react';
 import FloatingIcon from './FloatingIcons';
 import axios from 'axios';
 import api from './api/axios';
-// const BASE_URL = 'https://what-are-we-cooking.onrender.com'
+const BASE_URL = 'https://what-are-we-cooking.onrender.com'
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -48,26 +48,10 @@ function App() {
     }
   };
 
-  const handleClick = async(e) => {
-    e.preventDefault();
+  const handleClick = () => {
+    // e.preventDefault();
     fileInputRef.current?.click()
     
-  // Wait for the file input's change event (Promise wrapper)
-  const fileSelected = await new Promise((resolve) => {
-    const listener = (e) => {
-      const file = e.target.files[0];
-      e.target.removeEventListener('change', listener);
-      resolve(file);
-    };
-    fileInputRef.current.addEventListener('change', listener);
-  });
-
-  if (fileSelected) {
-    setSelectedFile(fileSelected);
-    setHasSelectedFile(true);
-    setResultReady(false);
-  }
-
     setResultFile(selectedFile)
   }
 
@@ -78,7 +62,6 @@ function App() {
 
     try {
       const res = await api.post(`/upload-file/`, formData, {
-      // const res = await axios.post(`${BASE_URL}/upload-file/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",
@@ -86,9 +69,12 @@ function App() {
       });
       const data = res.data
 
+      console.log(data);
+      
+
       // Wait ~6 seconds before attempting download
       setTimeout(() => {
-        const fullDownloadUrl = `/${BASE_URL}${data.downloadUrl}`;
+        const fullDownloadUrl = `${BASE_URL}${data.downloadUrl}`;
         setDownloadUrl(fullDownloadUrl);
 
         // setHasSelectedFile(false)
@@ -100,7 +86,6 @@ function App() {
       console.log(error);
       setIsAnalyzing(false)
       return alert("Failed: " + (error.response?.data?.detail || error.message));
-
     }
   }
 
@@ -122,7 +107,7 @@ function App() {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      setSelectedFile(null)
+      // setSelectedFile(null)
 
       return setDownloading(false)
     } catch (err) {

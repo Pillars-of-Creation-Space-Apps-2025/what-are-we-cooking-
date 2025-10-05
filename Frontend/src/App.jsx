@@ -2,23 +2,20 @@ import { useRef, useState } from 'react';
 import './App.css'
 import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, Zap, CheckCircle } from 'lucide-react';
 import FloatingIcon from './FloatingIcons';
-import api from './api/axios'
 import axios from 'axios';
-
-
-const BASE_URL = "https://what-are-we-cooking.onrender.com";
-
+import api from './api/axios';
+// const BASE_URL = 'https://what-are-we-cooking.onrender.com'
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [hasSelectedFile, setHasSelectedFile] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [isGettingResult, setIsGettingResult] = useState(false)
   const fileInputRef = useRef(null);
   const [resultReady, setResultReady] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [resultFile, setResultFile] = useState(null)
   const [downloadUrl, setDownloadUrl] = useState("")
+  const [downloadName, setDownloadName] = useState('')
 
   const icons = [
     { icon: Satellite, color: 'indigo' },
@@ -51,9 +48,25 @@ function App() {
     }
   };
 
-  const handleClick = (e) => {
-     e.preventDefault();
-      fileInputRef.current?.click()
+  const handleClick = async(e) => {
+    e.preventDefault();
+    fileInputRef.current?.click()
+    
+  // Wait for the file input's change event (Promise wrapper)
+  const fileSelected = await new Promise((resolve) => {
+    const listener = (e) => {
+      const file = e.target.files[0];
+      e.target.removeEventListener('change', listener);
+      resolve(file);
+    };
+    fileInputRef.current.addEventListener('change', listener);
+  });
+
+  if (fileSelected) {
+    setSelectedFile(fileSelected);
+    setHasSelectedFile(true);
+    setResultReady(false);
+  }
 
     setResultFile(selectedFile)
   }
@@ -64,7 +77,8 @@ function App() {
     formData.append("file", selectedFile);
 
     try {
-      const res = await axios.post("/api/upload-file/", formData, {
+      const res = await api.post(`/upload-file/`, formData, {
+      // const res = await axios.post(`${BASE_URL}/upload-file/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Accept: "application/json",
@@ -74,7 +88,7 @@ function App() {
 
       // Wait ~6 seconds before attempting download
       setTimeout(() => {
-        const fullDownloadUrl = `/api${data.downloadUrl}`;
+        const fullDownloadUrl = `/${BASE_URL}${data.downloadUrl}`;
         setDownloadUrl(fullDownloadUrl);
 
         // setHasSelectedFile(false)
@@ -95,7 +109,7 @@ function App() {
     setDownloading(true)
 
     try {
-      const res = await axios.get(downloadUrl, {
+      const res = await api.get(downloadUrl, {
         responseType: "blob",
       });
 
@@ -108,7 +122,7 @@ function App() {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      // setSelectedFile(null)
+      setSelectedFile(null)
 
       return setDownloading(false)
     } catch (err) {
@@ -199,6 +213,20 @@ function App() {
 
       {/* result */}
       <div>
+        {isAnalyzing && 
+         <div className="relative min-h-[20vh] bg-gradient-to-br from-slate-600 via-indigo-950 to-slate-700 overflow-hidden">
+            {/* Main content */}
+            <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
+              <div className="w-full max-w-3xl mx-auto">
+                {/* Download Card */}
+                <div className="bg-slate-800/30 backdrop-blur-sm border border-indigo-500/30 rounded-2xl p-6 md:p-8 shadow-2xl flex items-center justify-between">
+                 <Loader className='animate-spin text-white'/>
+                </div>
+              </div>
+            </div>
+          </div>}
+
+
         {resultReady &&
           <div className="relative min-h-[60vh] bg-gradient-to-br from-slate-600 via-indigo-950 to-slate-700 overflow-hidden">
             {/* Main content */}
@@ -216,7 +244,7 @@ function App() {
                         Your File is Ready
                       </h2>
                       <p className="text-slate-400 text-sm md:text-base mt-1">
-                        {/* {resultFile.name} */} test_exoplanet_data_result.csv
+                       {/* {selectedFile.name.split('.')[0]}_result.csv */}
                       </p>
                     </div>
                   </div>

@@ -51,25 +51,15 @@ function App() {
     }
   };
 
-  const handleClick = () => {
-    if (!selectedFile) {
-      return fileInputRef.current?.click()
-    }
+  const handleClick = (e) => {
+     e.preventDefault();
+      fileInputRef.current?.click()
 
     setResultFile(selectedFile)
-    setIsAnalyzing(true);
-    // setTimeout(() => {
-    //   setResultReady(true);
-    // }, 1500);
-
-    // setTimeout(() => {
-    //   setHasSelectedFile(false)
-    // }, 6000);
-
-    sendData()
   }
 
   const sendData = async () => {
+    setIsAnalyzing(true)
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -100,13 +90,13 @@ function App() {
     }
   }
 
-  const handleDownload = async() => {
-     if (!downloadUrl) return;
-     setDownloading(true)
+  const handleDownload = async () => {
+    if (!downloadUrl) return;
+    setDownloading(true)
 
     try {
       const res = await axios.get(downloadUrl, {
-        responseType: "blob", 
+        responseType: "blob",
       });
 
       const blob = new Blob([res.data], { type: "text/csv" });
@@ -157,23 +147,15 @@ function App() {
                 <li className='flex items-center gap-2'><CheckCircle className='size-4' /> Equilibrium Temperature(K)</li>
                 <li className='flex items-center gap-2'><CheckCircle className='size-4' /> Stellar Radius (Solar Radii)</li>
                 <li className='flex items-center gap-2'><CheckCircle className='size-4' /> Stellar Distance (pc)</li>
-                <li className='flex items-center gap-2'><CheckCircle className='size-4' /> Planetary Radius (Earth Radius)</li>
                 <li className='flex items-center gap-2'><CheckCircle className='size-4' /> Stellar Metallicity (dex)</li>
               </ul>
             </div>
 
             {/* File upload area */}
             <div className="mt-12">
-              <div
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                className={`relative mx-auto max-w-2xl p-8 md:p-12 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group
-                
-                   backdrop-blur-sm`
-                }
-              >
-                <input ref={fileInputRef} type="file" onChange={handleFileChange} className="hidden" accept=".csv"
-                />
+              <div onDragOver={handleDragOver} onDrop={handleDrop}
+                className={`relative mx-auto max-w-2xl p-8 md:p-12 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer group backdrop-blur-sm`}>
+                <input ref={fileInputRef} type="file" onChange={handleFileChange} className="hidden" accept=".csv" />
 
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -195,10 +177,19 @@ function App() {
                     )}
                   </div>
 
-                  <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} disabled={!isAnalyzing}>
+                  {!selectedFile ?
+                    <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} >Upload File</button> 
+                    :
+                    <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={sendData} disabled={isAnalyzing}>
+                       {isAnalyzing ?
+                        <div className='flex items-center gap-2'><Loader className='animate-spin' /> Sending</div> :
+                        <div className='flex items-center gap-2'> Send</div> }
+                    </button>}
+
+                  {/* <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} disabled={!isAnalyzing}>
                     {selectedFile ? <>{isAnalyzing ?
                       <div className='flex items-center gap-2'><Loader className='animate-spin' /> Sending</div> : "Send"}</> : 'Upload File'}
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -236,15 +227,15 @@ function App() {
                     disabled={downloading}
                     className="group relative overflow-hidden bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-indigo-500/50 disabled:cursor-not-allowed"
                   >
-                  {downloading ?  
-                  <div className="flex items-center justify-center gap-3">
-                      <Loader className={`w-5 h-5 animate-spin`} />
-                      <span className="text-lg"> Downloading... </span>
-                    </div>: 
-                    <div className="flex items-center justify-center gap-3">
-                      <Download className={`w-5 h-5`} />
-                      <span className="text-lg"> Download File </span>
-                    </div>}
+                    {downloading ?
+                      <div className="flex items-center justify-center gap-3">
+                        <Loader className={`w-5 h-5 animate-spin`} />
+                        <span className="text-lg"> Downloading... </span>
+                      </div> :
+                      <div className="flex items-center justify-center gap-3">
+                        <Download className={`w-5 h-5`} />
+                        <span className="text-lg"> Download File </span>
+                      </div>}
 
                     {/* Shine effect */}
                     <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>

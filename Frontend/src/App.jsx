@@ -19,7 +19,6 @@ function App() {
   const [downloading, setDownloading] = useState(false);
   const [resultFile, setResultFile] = useState(null)
   const [downloadUrl, setDownloadUrl] = useState("")
-  const [isDownloading, setIsDownloading] = useState(false)
 
   const icons = [
     { icon: Satellite, color: 'indigo' },
@@ -103,7 +102,7 @@ function App() {
 
   const handleDownload = async() => {
      if (!downloadUrl) return;
-     setIsDownloading(true)
+     setDownloading(true)
 
     try {
       const res = await axios.get(downloadUrl, {
@@ -121,7 +120,7 @@ function App() {
       window.URL.revokeObjectURL(url);
       setSelectedFile(null)
 
-      return setIsDownloading(false)
+      return setDownloading(false)
     } catch (err) {
       console.error("Download error:", err);
       return alert("Download failed: " + (err.response?.data?.detail || err.message));
@@ -196,7 +195,7 @@ function App() {
                     )}
                   </div>
 
-                  <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} disabled={isAnalyzing}>
+                  <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} disabled={!isAnalyzing}>
                     {selectedFile ? <>{isAnalyzing ?
                       <div className='flex items-center gap-2'><Loader className='animate-spin' /> Sending</div> : "Send"}</> : 'Upload File'}
                   </button>
@@ -237,12 +236,15 @@ function App() {
                     disabled={downloading}
                     className="group relative overflow-hidden bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-indigo-500/50 disabled:cursor-not-allowed"
                   >
+                  {downloading ?  
+                  <div className="flex items-center justify-center gap-3">
+                      <Loader className={`w-5 h-5 animate-spin`} />
+                      <span className="text-lg"> Downloading... </span>
+                    </div>: 
                     <div className="flex items-center justify-center gap-3">
-                      <Download className={`w-5 h-5 ${downloading ? 'animate-bounce' : 'group-hover:animate-bounce'}`} />
-                      <span className="text-lg">
-                        {downloading ? 'Downloading...' : 'Download File'}
-                      </span>
-                    </div>
+                      <Download className={`w-5 h-5`} />
+                      <span className="text-lg"> Download File </span>
+                    </div>}
 
                     {/* Shine effect */}
                     <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>

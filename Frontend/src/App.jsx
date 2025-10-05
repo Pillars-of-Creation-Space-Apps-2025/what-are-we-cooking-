@@ -2,8 +2,9 @@ import { useRef, useState } from 'react';
 import './App.css'
 import { Upload, Orbit, Eclipse, SunMoon, Telescope, Satellite, Loader, Rocket, FileText, Download, CheckCircle } from 'lucide-react';
 import FloatingIcon from './FloatingIcons';
-import axios from 'axios';
 import api from './api/axios';
+
+
 const BASE_URL = 'https://what-are-we-cooking.onrender.com'
 
 function App() {
@@ -69,12 +70,9 @@ function App() {
       });
       const data = res.data
 
-      console.log(data);
-      
-
-      // Wait ~6 seconds before attempting download
+      // Wait ~2 seconds before attempting download
       setTimeout(() => {
-        const fullDownloadUrl = `${BASE_URL}${data.downloadUrl}`;
+        const fullDownloadUrl = `https://what-are-we-cooking.onrender.com${data.downloadUrl}`;
         setDownloadUrl(fullDownloadUrl);
 
         // setHasSelectedFile(false)
@@ -184,11 +182,6 @@ function App() {
                         <div className='flex items-center gap-2'><Loader className='animate-spin' /> Sending</div> :
                         <div className='flex items-center gap-2'> Send</div> }
                     </button>}
-
-                  {/* <button className="mt-4 px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-indigo-500/50" onClick={handleClick} disabled={!isAnalyzing}>
-                    {selectedFile ? <>{isAnalyzing ?
-                      <div className='flex items-center gap-2'><Loader className='animate-spin' /> Sending</div> : "Send"}</> : 'Upload File'}
-                  </button> */}
                 </div>
               </div>
             </div>

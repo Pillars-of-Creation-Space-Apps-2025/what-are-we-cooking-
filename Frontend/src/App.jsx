@@ -48,8 +48,8 @@ function App() {
     }
   };
 
-  const handleClick = async(e) => {
-    e.preventDefault();
+  const handleClick = () => {
+    // e.preventDefault();
     fileInputRef.current?.click()
     
     setResultFile(selectedFile)
@@ -69,9 +69,12 @@ function App() {
       });
       const data = res.data
 
+      console.log(data);
+      
+
       // Wait ~6 seconds before attempting download
       setTimeout(() => {
-        const fullDownloadUrl = `/${BASE_URL}${data.downloadUrl}`;
+        const fullDownloadUrl = `${BASE_URL}${data.downloadUrl}`;
         setDownloadUrl(fullDownloadUrl);
 
         // setHasSelectedFile(false)
